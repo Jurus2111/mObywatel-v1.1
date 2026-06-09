@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#121212">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>mObywatel – Pokaż kod QR</title>
+    <link rel="apple-touch-icon" href="assets/images/otM5jOA.png">
+    <link rel="icon" type="image/x-icon" href="assets/images/otM5jOA.png">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- QR code library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: "SF Pro Display", "Poppins", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top_bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            padding-top: max(16px, env(safe-area-inset-top));
+        }
+
+        .top_bar .back_btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #4da6ff;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .top_bar .back_btn svg { width: 10px; height: 16px; }
+
+        .top_bar .page_title {
+            font-size: 17px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .top_bar .help_btn {
+            width: 28px; height: 28px;
+            border: 1.5px solid #555;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #aaa;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .content {
+            flex: 1;
+            padding: 10px 18px;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom));
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .page_main_title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page_subtitle {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.45;
+            margin-bottom: 28px;
+        }
+
+        /* QR code container */
+        .qr_wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .qr_box {
+            background-color: #1a1a1a;
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        #qrcode {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrcode canvas,
+        #qrcode img {
+            display: block;
+            border-radius: 4px;
+        }
+
+        .pin_code {
+            font-size: 38px;
+            font-weight: 300;
+            letter-spacing: 10px;
+            margin-top: 22px;
+            color: white;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress_bar_wrapper {
+            width: 90%;
+            height: 4px;
+            background-color: #2a2a2a;
+            border-radius: 2px;
+            margin-top: 18px;
+            overflow: hidden;
+        }
+
+        .progress_bar_fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1a6fd4, #4da6ff);
+            border-radius: 2px;
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .expire_text {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .expire_text strong {
+            color: white;
+        }
+
+        /* flags at bottom of content */
+        .flags_row {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            align-items: center;
+        }
+
+        .flag_img {
+            height: 28px;
+            border-radius: 4px;
+        }
+
+        /* Bottom bar - identical to home.html */
+        .bottom_bar {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            background-color: #121212 !important;
+            border-top: none !important;
+            height: auto !important;
+            padding-top: 12px !important;
+            padding-bottom: calc(2px + env(safe-area-inset-bottom)) !important;
+            display: flex;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .bottom_bar_grid {
+            grid-template-columns: repeat(4, 25%) !important;
+            margin-top: 0 !important;
+            height: auto !important;
+            align-items: center;
+            width: 100% !important;
+            display: grid !important;
+        }
+
+        .bottom_element_grid {
+            margin-top: 0 !important;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .active_icon_bg {
+            background-color: #0b2545;
+            padding: 4px 20px;
+            border-radius: 16px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bottom_element_image { margin-bottom: 4px !important; }
+        .active_icon_bg .bottom_element_image { margin-bottom: 0 !important; }
+
+        .bottom_element_text {
+            color: #888888 !important;
+            margin-top: 0 !important;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .bottom_element_text.open { color: #4da6ff !important; }
+    </style>
+</head>
+<body>
+
+    <div class="top_bar">
+        <div class="back_btn" onclick="location.href='qr2.html' + window.location.search">
+            <svg viewBox="0 0 10 16" fill="none" stroke="#4da6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9,1 1,8 9,15"/>
+            </svg>
+            Kod QR
+        </div>
+        <div class="page_title">Kod QR</div>
+        <div class="help_btn">?</div>
+    </div>
+
+    <div class="content">
+        <h1 class="page_main_title">Pokaż kod QR</h1>
+        <p class="page_subtitle">Poproś osobę, której sprawdzasz dokument, aby zeskanowała lub przepisała ten kod w swojej aplikacji mObywatel.</p>
+
+        <div class="qr_wrapper">
+            <div class="qr_box">
+                <div id="qrcode"></div>
+                <div class="pin_code" id="pin_display">000000</div>
+                <div class="progress_bar_wrapper">
+                    <div class="progress_bar_fill" id="progress_bar"></div>
+                </div>
+                <p class="expire_text">Kod wygaśnie za: <strong id="timer_text">3 min 0 sek.</strong></p>
+            </div>
+
+            <div class="flags_row">
+                <img class="flag_img" src="assets/images/Pfan6Qa.png" alt="PL">
+                <img class="flag_img" src="assets/images/sltb5a0.png" alt="EU">
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom bar identical to home.html -->
+    <div class="bottom_bar">
+        <div class="bottom_bar_grid">
+            <div class="bottom_element_grid" onclick="location.href='home.html' + window.location.search">
+                <div class="bottom_element_image home_open"></div>
+                <p class="bottom_element_text">Dokumenty</p>
+            </div>
+            <div class="bottom_element_grid" onclick="location.href='uslugi.html' + window.location.search">
+                <div class="bottom_element_image services"></div>
+                <p class="bottom_element_text">Usługi</p>
+            </div>
+            <div class="bottom_element_grid" onclick="location.href='qr2.html' + window.location.search">
+                <div class="active_icon_bg">
+                    <div class="bottom_element_image qr"></div>
+                </div>
+                <p class="bottom_element_text open">Kod QR</p>
+            </div>
+            <div class="bottom_element_grid">
+                <div class="bottom_element_image more"></div>
+                <p class="bottom_element_text">Więcej</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/manifest.js"></script>
+    <script>
+        const INTERVAL_MS = 3 * 60 * 1000; // 3 minutes
+        let qrInstance = null;
+        let secondsLeft = 180;
+        let timerInterval = null;
+
+        function randomPin() {
+            return String(Math.floor(100000 + Math.random() * 900000));
+        }
+
+        function randomQRData() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 64; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'mObywatel:' + result;
+        }
+
+        function generateNewCode() {
+            const pin = randomPin();
+            const qrData = randomQRData();
+
+            // Update PIN display
+            document.getElementById('pin_display').textContent = pin;
+
+            // Regenerate QR code
+            const container = document.getElementById('qrcode');
+            container.innerHTML = '';
+            qrInstance = new QRCode(container, {
+                text: qrData,
+                width: 220,
+                height: 220,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M
+            });
+
+            // Reset timer
+            secondsLeft = 180;
+            updateTimer();
+        }
+
+        function updateTimer() {
+            const min = Math.floor(secondsLeft / 60);
+            const sec = secondsLeft % 60;
+            document.getElementById('timer_text').textContent =
+                min + ' min ' + sec + ' sek.';
+
+            // Progress bar - fills from right to left (depletes)
+            const pct = (secondsLeft / 180) * 100;
+            document.getElementById('progress_bar').style.width = pct + '%';
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft <= 0) {
+                    generateNewCode();
+                } else {
+                    updateTimer();
+                }
+            }, 1000);
+        }
+
+        // Init
+        generateNewCode();
+        startTimer();
+    </script>
+</body>
+</html>

@@ -1,205 +1,265 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 <head>
-  <title>mObywatel</title>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="assets/css/card.css?v=1.2">
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="icon" type="image/x-icon" href="assets/images/otM5jOA.png">
-  <link rel="apple-touch-icon" href="assets/images/otM5jOA.png">
-  <link rel="shortcut icon" href="assets/images/otM5jOA.png">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
-  <meta name="mobile-web-app-capable" content="yes">
-  <style>
-    body { background-color: #121212 !important; color: white; }
-    .main_wrapper {
-      margin-bottom: 0px;
-  display: flex;
-  justify-content: center;
-  align-items: center;/* 100% wysokoĹ›ci minus paski */
-  padding: 20px 0;
-}
-    #camera-container {
-  border-radius: 20px;
-  width: 90%;
-  max-width: 550px;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border: 2px solid none;
-  height: 680px;
-  position: relative;
-}
-    #video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    /* Ramka na Ĺ›rodku */
-.scan-frame {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 200px;
-  transform: translate(-50%, -50%);
-  pointer-events: none; /* nie blokuje klikniÄ™Ä‡ w kamerÄ™ */
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#121212">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>mObywatel – Kod QR</title>
+    <link rel="apple-touch-icon" href="assets/images/otM5jOA.png">
+    <link rel="icon" type="image/x-icon" href="assets/images/otM5jOA.png">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* WspĂłlne style naroĹĽnikĂłw */
-.corner {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border: 5px solid white;
-  box-sizing: border-box;
-}
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: "SF Pro Display", "Poppins", sans-serif;
+            min-height: 100vh;
+            padding-bottom: calc(90px + env(safe-area-inset-bottom));
+        }
 
-/* Lewy gĂłrny rĂłg */
-.corner.tl {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-  border-top-left-radius: 25px
-}
+        .top_bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px;
+            padding-top: max(16px, env(safe-area-inset-top));
+        }
 
-/* Prawy gĂłrny rĂłg */
-.corner.tr {
-  top: 0;
-  right: 0;
-  border-left: none;
-  border-bottom: none;
-  border-top-right-radius: 25px
-}
+        .top_bar .back_btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #4da6ff;
+            font-size: 17px;
+            cursor: pointer;
+        }
 
-/* Lewy dolny rĂłg */
-.corner.bl {
-  bottom: 0;
-  left: 0;
-  border-right: none;
-  border-top: none;
-  border-bottom-left-radius: 25px
-}
+        .top_bar .back_btn svg { width: 10px; height: 16px; }
 
-/* Prawy dolny rĂłg */
-.corner.br {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
-  border-bottom-right-radius: 25px
-}
-.buttonn{
-    width: 550;
-    width: 90%;
-    text-align: center;
-    height: 50px;
-    border: 1px solid ;
-    border-radius: 40px;
-    box-shadow: none;
-    background-color: #f5f6fb;
-    color: rgb(6, 71, 146);
-    font-size: 20px;
-    font-family: poppins;
-}
-.przycisk{
-    text-align: center;
-}
+        .top_bar .page_title {
+            font-size: 17px;
+            font-weight: 600;
+            color: white;
+        }
 
-  </style>
-<style>
-body { background-color: #121212 !important; color: white !important; }
-.bottom_bar { background-color: #1f2125 !important; border-top: 0.1px solid #2c2c2c !important; }
-.bottom_element_text { color: #a0a0a0 !important; }
-.bottom_element_text.open { color: white !important; }
-</style>
+        .top_bar .help_btn {
+            width: 28px; height: 28px;
+            border: 1.5px solid #555;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #aaa;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .content {
+            padding: 10px 18px 20px;
+        }
+
+        .page_main_title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page_subtitle {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 28px;
+            line-height: 1.4;
+        }
+
+        .action_card {
+            background-color: #1e1e1e;
+            border-radius: 16px;
+            padding: 0;
+            overflow: hidden;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: opacity 0.15s;
+        }
+
+        .action_card:active { opacity: 0.7; }
+
+        .action_row {
+            display: flex;
+            align-items: center;
+            padding: 18px 16px;
+            gap: 14px;
+            border-bottom: 0.5px solid #2a2a2a;
+        }
+
+        .action_row:last-child { border-bottom: none; }
+
+        .action_icon {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .action_icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+
+        .action_label {
+            flex: 1;
+        }
+
+        .action_label .label_title {
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .action_label .label_sub {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .action_arrow {
+            color: #555;
+            font-size: 18px;
+        }
+
+        /* Bottom bar - identical to home.html */
+        .bottom_bar {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            background-color: #121212 !important;
+            border-top: none !important;
+            height: auto !important;
+            padding-top: 12px !important;
+            padding-bottom: calc(2px + env(safe-area-inset-bottom)) !important;
+            display: flex;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .bottom_bar_grid {
+            grid-template-columns: repeat(4, 25%) !important;
+            margin-top: 0 !important;
+            height: auto !important;
+            align-items: center;
+            width: 100% !important;
+            display: grid !important;
+        }
+
+        .bottom_element_grid {
+            margin-top: 0 !important;
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .active_icon_bg {
+            background-color: #0b2545;
+            padding: 4px 20px;
+            border-radius: 16px;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bottom_element_image {
+            margin-bottom: 4px !important;
+        }
+
+        .active_icon_bg .bottom_element_image {
+            margin-bottom: 0 !important;
+        }
+
+        .bottom_element_text {
+            color: #888888 !important;
+            margin-top: 0 !important;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .bottom_element_text.open {
+            color: #4da6ff !important;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="top_grid">
-    <div class="action_grid" style="width: 25%;">
-      <img src="assets/images/BDZT6fX.png" class="back_img">
-      <p onclick="location.href='card.html' + window.location.search" class="back_text">mDowĂłd</p>
+    <div class="top_bar">
+        <div class="back_btn" onclick="location.href='home.html' + window.location.search">
+            <svg viewBox="0 0 10 16" fill="none" stroke="#4da6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9,1 1,8 9,15"/>
+            </svg>
+            Dokumenty
+        </div>
+        <div class="page_title">Kod QR</div>
+        <div class="help_btn">?</div>
     </div>
-    <p class="title_text" style="text-align: center;">Zeskanuj kod QR</p>
-  </div>
 
-  <div class="bottom_bar">
-    <div class="bottom_bar_grid">
-        <div class="bottom_element_grid" onclick="location.href='home.html' + window.location.search">
-            <div class="bottom_element_image home_open"></div>
-            <p class="bottom_element_text">Dokumenty</p>
-        </div>
-        <div class="bottom_element_grid" onclick="location.href='uslugi.html' + window.location.search">
-            <div class="bottom_element_image services"></div>
-            <p class="bottom_element_text">Usługi</p>
-        </div>
-        <div class="bottom_element_grid" onclick="location.href='qr2.html' + window.location.search">
-            <div class="active_icon_bg">
-                <div class="bottom_element_image qr"></div>
+    <div class="content">
+        <h1 class="page_main_title">Kod QR</h1>
+        <p class="page_subtitle">Wybierz akcję, którą chcesz wykonać przy użyciu kodu QR.</p>
+
+        <div class="action_card" onclick="location.href='qr_show.html' + window.location.search">
+            <div class="action_row">
+                <div class="action_icon">
+                    <img src="assets/images/YJpEaiC.png" alt="">
+                </div>
+                <div class="action_label">
+                    <div class="label_title">Pokaż kod QR</div>
+                    <div class="label_sub">Udostępnij swój kod QR</div>
+                </div>
+                <div class="action_arrow">›</div>
             </div>
-            <p class="bottom_element_text open">Kod QR</p>
         </div>
-        <div class="bottom_element_grid" send="more.html">
-            <div class="bottom_element_image more"></div>
-            <p class="bottom_element_text">Więcej</p>
+
+        <div class="action_card">
+            <div class="action_row">
+                <div class="action_icon">
+                    <img src="assets/images/2aN0vJE.png" alt="">
+                </div>
+                <div class="action_label">
+                    <div class="label_title">Skanuj kod QR</div>
+                    <div class="label_sub">Zeskanuj kod QR innej osoby</div>
+                </div>
+                <div class="action_arrow">›</div>
+            </div>
         </div>
     </div>
-</div>
-            <p class="bottom_element_text open">Kod QR</p>
-        </div>
-        <div class="bottom_element_grid" send="more.html">
-            <div class="bottom_element_image more"></div>
-            <p class="bottom_element_text">Więcej</p>
+
+    <!-- Bottom bar identical to home.html -->
+    <div class="bottom_bar">
+        <div class="bottom_bar_grid">
+            <div class="bottom_element_grid" onclick="location.href='home.html' + window.location.search">
+                <div class="bottom_element_image home_open"></div>
+                <p class="bottom_element_text">Dokumenty</p>
+            </div>
+            <div class="bottom_element_grid" onclick="location.href='uslugi.html' + window.location.search">
+                <div class="bottom_element_image services"></div>
+                <p class="bottom_element_text">Usługi</p>
+            </div>
+            <div class="bottom_element_grid" onclick="location.href='qr2.html' + window.location.search">
+                <div class="active_icon_bg">
+                    <div class="bottom_element_image qr"></div>
+                </div>
+                <p class="bottom_element_text open">Kod QR</p>
+            </div>
+            <div class="bottom_element_grid">
+                <div class="bottom_element_image more"></div>
+                <p class="bottom_element_text">Więcej</p>
+            </div>
         </div>
     </div>
-</div>
-  </div>
-  <p style="margin-top: 70px; margin-left: 30px; margin-bottom: 0px; font-size: 14px;">UmieĹ›Ä‡ kod QR w ramce, aby go zeskanowaÄ‡.</p>
-  <div class="main_wrapper" style="margin-top: 0px;">
-  <div id="camera-container">
-    <video id="video" autoplay playsinline></video>
-    <div class="scan-frame">
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
-</div>
 
-  </div>
-  </div>
-  <div class="przycisk">
-  <button class="buttonn">Wpisz kod</button>
-  </div>
-  <script>
-    async function startCamera() {
-      try {
-        const constraints = {
-          video: {
-            facingMode: { ideal: "environment" }  // preferowana tylna kamerka, jeĹ›li dostÄ™pna
-          },
-          audio: false
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        document.getElementById('video').srcObject = stream;
-      } catch (err) {
-        console.error("Nie udaĹ‚o siÄ™ uruchomiÄ‡ kamery:", err);
-      }
-    }
-
-    startCamera();
-  </script>
-  <script src="assets/js/bar.js"></script>
-  <script src="assets/js/manifest.js"></script>
+    <script src="assets/js/manifest.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
