@@ -5,40 +5,9 @@ if (savedImage) {
     params.set('image', savedImage);
 }
 
-var input = document.querySelector(".password_input");
-var dot = "•";
-var original = "";
-var eye = document.querySelector(".eye");
-
 document.querySelector(".login").addEventListener('click', () => {
-    checkPassword();
+    toHome();
 });
-
-function checkPassword() {
-    var savedPassword = localStorage.getItem('appPassword');
-
-    // Brak hasła w rejestrze → wejdź bez hasła
-    if (!savedPassword || savedPassword.trim() === '') {
-        toHome();
-        return;
-    }
-
-    // Hasło jest ustawione – original zawsze śledzi prawdziwe znaki
-    var enteredPassword = original;
-
-    if (enteredPassword.trim() === '') {
-        alert("Wpisz hasło!");
-        return;
-    }
-
-    if (enteredPassword === savedPassword) {
-        toHome();
-    } else {
-        original = "";
-        input.value = "";
-        alert("Błędne hasło!");
-    }
-}
 
 var welcome = "Dzień dobry!";
 
@@ -52,12 +21,17 @@ function toHome(){
     location.href = 'home.html?' + params.toString();
 }
 
+var input = document.querySelector(".password_input");
 input.addEventListener("keypress", (event) => {
     if (event.key === 'Enter') {
         document.activeElement.blur();
         checkPassword();
     }
 })
+
+var dot = "•";
+var original = "";
+var eye = document.querySelector(".eye");
 
 input.addEventListener("input", () => {
     var value = input.value.toString();
