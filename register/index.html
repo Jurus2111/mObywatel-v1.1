@@ -230,11 +230,26 @@
 
     
 
+    <div style="margin-top: 30px; margin-bottom: 10px;">
+        <p style="font-size: 15px; font-weight: 500; margin-bottom: 10px; color: #333;">Hasło do aplikacji <span style="font-size: 13px; color: #888;">(opcjonalne)</span></p>
+        <input type="password" id="app_password" placeholder="Pozostaw puste, aby nie ustawiać hasła" style="width: 100%; padding: 14px; font-size: 15px; border: 1px solid #ccc; border-radius: 10px; outline: none; box-sizing: border-box;">
+        <p style="font-size: 12px; color: #888; margin-top: 6px;">Jeśli nie ustawisz hasła, wystarczy kliknąć „Zaloguj się" na ekranie logowania.</p>
+    </div>
+
     <a class="go">wejdź</a>
     
 
     <script src="index.js"></script>
     <script src="manifest.js"></script>
+    <script>
+    // Save optional password to localStorage when submitting registration
+    document.querySelector('.go').addEventListener('click', function() {
+        var pwd = document.getElementById('app_password');
+        if (pwd) {
+            localStorage.setItem('appPassword', pwd.value.trim());
+        }
+    });
+    </script>
     <script>
 
 function generateDocumentNumber() {

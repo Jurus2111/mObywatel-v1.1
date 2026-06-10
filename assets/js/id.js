@@ -10,10 +10,13 @@ document.querySelector(".login").addEventListener('click', () => {
 });
 
 function checkPassword() {
-    if (original === "Kuba2008") {
+    var savedPassword = localStorage.getItem('appPassword');
+    // If no password was set during registration, log in immediately
+    if (!savedPassword || savedPassword === '') {
+        toHome();
+    } else if (original === savedPassword) {
         toHome();
     } else {
-        // Optional: you can show an error, or just clear the input
         original = "";
         input.value = "";
         alert("Błędne hasło!");
