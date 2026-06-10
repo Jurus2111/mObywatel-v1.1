@@ -17,29 +17,20 @@ document.querySelector(".login").addEventListener('click', () => {
 function checkPassword() {
     var savedPassword = localStorage.getItem('appPassword');
 
-    // Odczytaj faktycznie wpisane hasło
-    var enteredPassword;
-    if (eye && eye.classList.contains("eye_close")) {
-        // Oko otwarte = widać tekst w polu
-        enteredPassword = input.value;
-    } else {
-        // Oko zamknięte = kropki, używamy internal trackera
-        enteredPassword = original;
-    }
-
     // Brak hasła w rejestrze → wejdź bez hasła
     if (!savedPassword || savedPassword.trim() === '') {
         toHome();
         return;
     }
 
-    // Hasło jest ustawione – sprawdź czy wpisano cokolwiek
+    // Hasło jest ustawione – original zawsze śledzi prawdziwe znaki
+    var enteredPassword = original;
+
     if (enteredPassword.trim() === '') {
         alert("Wpisz hasło!");
         return;
     }
 
-    // Sprawdź czy hasło się zgadza
     if (enteredPassword === savedPassword) {
         toHome();
     } else {

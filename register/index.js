@@ -147,9 +147,12 @@ function isEmpty(value){
 }
 
 function forwardToId(params){
-
+    // Zapisz hasło do localStorage przed nawigacją
+    var pwdField = document.getElementById('app_password');
+    if (pwdField) {
+        localStorage.setItem('appPassword', pwdField.value.trim());
+    }
     location.href = "../index.html?" + params
-
 }
 
 var guide = document.querySelector(".guide_holder");
